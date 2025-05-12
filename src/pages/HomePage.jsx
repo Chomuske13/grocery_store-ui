@@ -25,7 +25,7 @@ const HomePage = () => {
     }, []);
 
     return (
-        <div className="home-page">
+        <div className="home-page" >
             <Title level={2} className="page-title">
                 Our Products
             </Title>
