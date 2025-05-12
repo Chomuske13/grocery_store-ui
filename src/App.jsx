@@ -4,6 +4,7 @@ import { Layout } from 'antd';
 import Navbar from './components/Navbar';
 import HomePage from './pages/HomePage';
 import RegisterPage from './pages/RegisterPage';
+import LoginPage from './pages/LoginPage';
 import './App.css';
 
 const { Content, Footer } = Layout;
@@ -17,6 +18,7 @@ function App() {
                     <Routes>
                         <Route path="/" element={<HomePage />} />
                         <Route path="/register" element={<RegisterPage />} />
+                        <Route path="/login" element={<LoginPage />} />
                     </Routes>
                 </Content>
                 <Footer className="app-footer">
