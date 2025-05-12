@@ -18,8 +18,20 @@ const Navbar = () => {
                     <span className="shop-title">Продуктовый магазин</span>
                 </div>
                 <Space className="nav-right">
-                    <Button type="text" className="nav-btn">Войти</Button>
-                    <Button type="primary" className="nav-btn">Регистрация</Button>
+                    <Button
+                        type="text"
+                        className="nav-btn"
+                        onClick={() => navigate('/login')}
+                    >
+                        Войти
+                    </Button>
+                    <Button
+                        type="primary"
+                        className="nav-btn"
+                        onClick={() => navigate('/register')}
+                    >
+                        Регистрация
+                    </Button>
                 </Space>
             </div>
         </nav>

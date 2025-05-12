@@ -1,22 +1,29 @@
 import React from 'react';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { Layout } from 'antd';
+import Navbar from './components/Navbar';
 import HomePage from './pages/HomePage';
-import Navbar from './components/Navbar.jsx';
+import RegisterPage from './pages/RegisterPage';
 import './App.css';
 
 const { Content, Footer } = Layout;
 
 function App() {
     return (
-        <Layout className="app-layout">
-            <Navbar />
-            <Content className="app-content">
-                <HomePage />
-            </Content>
-            <Footer className="app-footer">
-                ©{new Date().getFullYear()} Продуктовый магазин
-            </Footer>
-        </Layout>
+        <Router>
+            <Layout className="app-layout">
+                <Navbar />
+                <Content className="app-content">
+                    <Routes>
+                        <Route path="/" element={<HomePage />} />
+                        <Route path="/register" element={<RegisterPage />} />
+                    </Routes>
+                </Content>
+                <Footer className="app-footer">
+                    ©{new Date().getFullYear()} Продуктовый магазин
+                </Footer>
+            </Layout>
+        </Router>
     );
 }
 
