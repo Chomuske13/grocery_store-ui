@@ -4,7 +4,7 @@ import { List, Button, Tag, Space, message, Typography } from 'antd';
 import { ArrowLeftOutlined } from '@ant-design/icons';
 import './UserProductsPage.css';
 
-const { Title, Text: AntdText } = Typography; // Переименовываем Text в AntdText
+const { Title, Text: AntdText } = Typography;
 
 export const UserProductsPage = () => {
     const [products, setProducts] = useState([]);
@@ -58,15 +58,15 @@ export const UserProductsPage = () => {
                 <div>Loading products...</div>
             ) : (
                 <List
-                    itemLayout="horizontal"
+                    itemLayout="vertical"
                     dataSource={products}
                     renderItem={product => (
                         <List.Item>
                             <List.Item.Meta
                                 title={product.name}
                                 description={
-                                    <Space>
-                                        <AntdText>${product.price}</AntdText>
+                                    <Space direction="vertical" size={4}>
+                                        <AntdText>Price: ${product.price}</AntdText>
                                         <Tag color="blue">{product.category}</Tag>
                                     </Space>
                                 }

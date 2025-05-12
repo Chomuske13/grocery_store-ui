@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { Card, Button, message, Space, Typography } from 'antd';
-import { ShoppingCartOutlined } from '@ant-design/icons';
+import { ShoppingCartOutlined, LogoutOutlined } from '@ant-design/icons';
 import './AccountPage.css';
 
-const { Title, Text: AntdText } = Typography; // Аналогичное переименование
+const { Title, Text: AntdText } = Typography;
 
 export const AccountPage = () => {
     const [userData, setUserData] = useState(null);
@@ -61,20 +61,23 @@ export const AccountPage = () => {
                     <AntdText>{userData.bio || 'No bio provided'}</AntdText>
                 </div>
 
-                <Space style={{ marginTop: 24 }}>
-                    <Button
-                        type="primary"
-                        onClick={handleLogout}
-                        className="logout-button"
-                    >
-                        Log Out
-                    </Button>
+                <Space direction="vertical" style={{ width: '100%', marginTop: 24 }}>
                     <Button
                         type="default"
                         icon={<ShoppingCartOutlined />}
                         onClick={goToUserProducts}
+                        block
                     >
                         View My Products
+                    </Button>
+                    <Button
+                        type="primary"
+                        icon={<LogoutOutlined />}
+                        onClick={handleLogout}
+                        block
+                        className="logout-button"
+                    >
+                        Log Out
                     </Button>
                 </Space>
             </Card>
