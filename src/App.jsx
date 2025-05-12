@@ -7,6 +7,7 @@ import RegisterPage from './pages/RegisterPage';
 import LoginPage from './pages/LoginPage';
 import './App.css';
 import AccountPage from "./pages/AccountPage.jsx";
+import UserProductsPage from './pages/UserProductsPage';
 
 const { Content, Footer } = Layout;
 
@@ -21,6 +22,7 @@ function App() {
                         <Route path="/register" element={<RegisterPage />} />
                         <Route path="/login" element={<LoginPage />} />
                         <Route path="/account/:id" element={<AccountPage />} />
+                        <Route path="/users/:id/products" element={<UserProductsPage />} />
                     </Routes>
                 </Content>
                 <Footer className="app-footer">

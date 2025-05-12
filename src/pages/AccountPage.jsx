@@ -1,29 +1,31 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { Card, Typography, Button, message } from 'antd';
+import { Card, Button, message, Space, Typography } from 'antd';
+import { ShoppingCartOutlined } from '@ant-design/icons';
 import './AccountPage.css';
 
-const { Title, Text } = Typography;
+const { Title, Text: AntdText } = Typography; // Аналогичное переименование
 
 export const AccountPage = () => {
     const [userData, setUserData] = useState(null);
+    const [loading, setLoading] = useState(false);
     const navigate = useNavigate();
-    const { id } = useParams(); // Получаем ID из URL
+    const { id } = useParams();
 
     useEffect(() => {
         const fetchUserData = async () => {
+            setLoading(true);
             try {
                 const response = await fetch(`http://localhost:8080/users/${id}`);
-
-                if (!response.ok) {
-                    throw new Error('Failed to fetch user data');
-                }
+                if (!response.ok) throw new Error('Failed to fetch user data');
 
                 const data = await response.json();
                 setUserData(data);
             } catch (error) {
                 message.error(error.message);
                 navigate('/login');
+            } finally {
+                setLoading(false);
             }
         };
 
@@ -36,11 +38,12 @@ export const AccountPage = () => {
         message.success('Logged out successfully');
     };
 
-    // ... остальной код без изменений
+    const goToUserProducts = () => {
+        navigate(`/users/${id}/products`);
+    };
 
-
-    if (!userData) {
-        return <div>Loading...</div>;
+    if (loading || !userData) {
+        return <div>Loading user data...</div>;
     }
 
     return (
@@ -51,20 +54,29 @@ export const AccountPage = () => {
                 </Title>
 
                 <div className="account-info">
-                    <Text strong>Username:</Text>
-                    <Text>{userData.username}</Text>
+                    <AntdText strong>Username:</AntdText>
+                    <AntdText>{userData.username}</AntdText>
 
-                    <Text strong style={{ marginTop: 16 }}>Bio:</Text>
-                    <Text>{userData.bio || 'No bio provided'}</Text>
+                    <AntdText strong style={{ marginTop: 16 }}>Bio:</AntdText>
+                    <AntdText>{userData.bio || 'No bio provided'}</AntdText>
                 </div>
 
-                <Button
-                    type="primary"
-                    onClick={handleLogout}
-                    className="logout-button"
-                >
-                    Log Out
-                </Button>
+                <Space style={{ marginTop: 24 }}>
+                    <Button
+                        type="primary"
+                        onClick={handleLogout}
+                        className="logout-button"
+                    >
+                        Log Out
+                    </Button>
+                    <Button
+                        type="default"
+                        icon={<ShoppingCartOutlined />}
+                        onClick={goToUserProducts}
+                    >
+                        View My Products
+                    </Button>
+                </Space>
             </Card>
         </div>
     );

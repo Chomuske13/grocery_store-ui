@@ -4,19 +4,23 @@
     align-items: center;
     min-height: 80vh;
     padding: 24px;
+    max-width: 800px;
+    margin: 0 auto;
 }
 
 .account-card {
     width: 100%;
     max-width: 500px;
-    padding: 32px;
+  /*  padding: 32px;*/
     border-radius: 8px;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    padding: 24px;
 }
 
 .account-title {
     text-align: center;
-    margin-bottom: 24px !important;
+   /* margin-bottom: 24px !important;*/
+    margin-bottom: 16px !important;
 }
 
 .account-info {
@@ -32,4 +36,7 @@
     width: 100%;
     height: 40px;
     margin-top: 16px;
+}
+.ant-list-item {
+    padding: 12px 0 !important;
 }
