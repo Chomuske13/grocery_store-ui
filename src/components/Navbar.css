@@ -1,0 +1,55 @@
+.navbar {
+    background: #fff;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    padding: 0 24px;
+    height: 64px;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+}
+
+.navbar-content {
+    max-width: 1200px;
+    margin: 0 auto;
+    height: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.nav-left {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
+.home-icon {
+    font-size: 20px;
+    color: #1890ff;
+    cursor: pointer;
+    transition: color 0.3s;
+}
+
+.home-icon:hover {
+    color: #40a9ff;
+}
+
+.shop-title {
+    font-size: 18px;
+    font-weight: 500;
+    color: rgba(0, 0, 0, 0.85);
+}
+
+.nav-right {
+    display: flex;
+    align-items: center;
+}
+
+.nav-btn {
+    height: 32px;
+    font-weight: 500;
+}
+
+.nav-btn:first-child {
+    margin-right: 8px;
+}
