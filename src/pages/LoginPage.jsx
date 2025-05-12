@@ -21,20 +21,19 @@ export const LoginPage = () => {
                 body: JSON.stringify(values),
             });
 
-            const data = await response.json();
-
             if (!response.ok) {
-                message.error(data.message || 'Login failed');
-                return;
+                const error = await response.text();
+                throw new Error(error);
             }
 
+            const user = await response.json();
             message.success('Login successful!');
-            // Сохраняем токен или другие данные авторизации
-            localStorage.setItem('authToken', data.token);
-            navigate('/');
+
+            // Сохраняем ID пользователя (без токена)
+            localStorage.setItem('userId', user.id);
+            navigate(`/account/${user.id}`);
         } catch (error) {
-            message.error('Connection error. Please try again later.');
-            console.error('Login error:', error);
+            message.error(error.message);
         } finally {
             setLoading(false);
         }

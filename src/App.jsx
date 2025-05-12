@@ -6,6 +6,7 @@ import HomePage from './pages/HomePage';
 import RegisterPage from './pages/RegisterPage';
 import LoginPage from './pages/LoginPage';
 import './App.css';
+import AccountPage from "./pages/AccountPage.jsx";
 
 const { Content, Footer } = Layout;
 
@@ -19,6 +20,7 @@ function App() {
                         <Route path="/" element={<HomePage />} />
                         <Route path="/register" element={<RegisterPage />} />
                         <Route path="/login" element={<LoginPage />} />
+                        <Route path="/account/:id" element={<AccountPage />} />
                     </Routes>
                 </Content>
                 <Footer className="app-footer">
