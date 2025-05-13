@@ -20,8 +20,8 @@
 
 .account-title {
     text-align: center;
-   /* margin-bottom: 24px !important;*/
-    margin-bottom: 16px !important;
+    margin-bottom: 24px !important;
+   /* margin-bottom: 16px !important;*/
 }
 
 .account-info {
@@ -42,4 +42,13 @@
 }
 .ant-list-item {
     padding: 12px 0 !important;
+}
+
+/* Стили для кнопок действий */
+.ant-space-vertical > .ant-btn {
+    margin-bottom: 8px;
+}
+
+.ant-space-vertical > .ant-btn:last-child {
+    margin-bottom: 0;
 }

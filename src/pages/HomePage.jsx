@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Typography } from 'antd';
 import ProductsList from '../components/ProductList';
-
 const { Title } = Typography;
 
 const HomePage = () => {

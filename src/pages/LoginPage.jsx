@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Form, Input, Button, Card, Typography, message } from 'antd';
-import './RegisterPage.css'; // Используем те же стили
+import './RegisterPage.css';
 
 const { Title, Text } = Typography;
 
@@ -9,9 +9,11 @@ export const LoginPage = () => {
     const [form] = Form.useForm();
     const navigate = useNavigate();
     const [loading, setLoading] = useState(false);
+    const [accountNotFound, setAccountNotFound] = useState(false);
 
     const onFinish = async (values) => {
         setLoading(true);
+        setAccountNotFound(false); // Сбрасываем состояние перед новым запросом
         try {
             const response = await fetch('http://localhost:8080/auth/login', {
                 method: 'POST',
@@ -20,20 +22,32 @@ export const LoginPage = () => {
                 },
                 body: JSON.stringify(values),
             });
-
+/*
             if (!response.ok) {
-                const error = await response.text();
-                throw new Error(error);
+                let errorData;
+                try {
+                    errorData = await response.json();
+                } catch (e) {
+                    errorData = { message: 'Login failed' };
+                }
+
+                let errorMessage = errorData.message || 'Login failed';
+/*
+                if (response.status === 404 || errorData.message?.toLowerCase().includes('not found')) {
+                    errorMessage = 'Account not found. Please check your credentials or sign up.';
+                    setAccountNotFound(true); // Устанавливаем состояние для отображения в UI
+                }
+
+                throw new Error(errorMessage);
             }
-
-            const user = await response.json();
+*/
+            const data = await response.json();
             message.success('Login successful!');
-
-            // Сохраняем ID пользователя (без токена)
-            localStorage.setItem('userId', user.id);
-            navigate(`/account/${user.id}`);
+            localStorage.setItem('userId', data.id);
+            navigate(`/account/${data.id}`);
         } catch (error) {
             message.error(error.message);
+            form.setFields([{ name: 'password', errors: [] }]);
         } finally {
             setLoading(false);
         }
@@ -48,6 +62,13 @@ export const LoginPage = () => {
                 <Text type="secondary" className="register-subtitle">
                     Sign in to continue
                 </Text>
+
+                {/* Блок с сообщением об ошибке */}
+                {accountNotFound && (
+                    <div className="error-message" style={{ color: '#ff4d4f', marginBottom: 16 }}>
+                        Account not found. Please check your credentials or sign up.
+                    </div>
+                )}
 
                 <Form
                     form={form}

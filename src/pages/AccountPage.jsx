@@ -1,14 +1,17 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { Card, Button, message, Space, Typography } from 'antd';
-import { ShoppingCartOutlined, LogoutOutlined } from '@ant-design/icons';
+import { Card, Button, message, Space, Typography, Modal } from 'antd';
+import { ShoppingCartOutlined, LogoutOutlined, EditOutlined, DeleteOutlined } from '@ant-design/icons';
+import EditAccountModal from '../components/EditAccountModal';
 import './AccountPage.css';
+import { showDeleteConfirm } from '../components/DeleteAccountModal';
 
 const { Title, Text: AntdText } = Typography;
 
 export const AccountPage = () => {
     const [userData, setUserData] = useState(null);
     const [loading, setLoading] = useState(false);
+    const [editModalVisible, setEditModalVisible] = useState(false);
     const navigate = useNavigate();
     const { id } = useParams();
 
@@ -42,6 +45,43 @@ export const AccountPage = () => {
         navigate(`/users/${id}/products`);
     };
 
+    const handleDeleteAccount = () => {
+        showDeleteConfirm(id, () => {
+            navigate('/');
+        });
+    };
+
+    const handleUpdateAccount = async (values) => {
+        try {
+            setLoading(true);
+            const response = await fetch(`http://localhost:8080/users/${id}`, {
+                method: 'PATCH',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    username: values.username,
+                    password: values.password, // Добавляем пароль
+                    bio: values.bio
+                }),
+            });
+
+            if (!response.ok) {
+                const errorData = await response.json();
+                throw new Error(errorData.message || 'Failed to update account');
+            }
+
+            const updatedUser = await response.json();
+            setUserData(updatedUser);
+            message.success('Account updated successfully');
+        } catch (error) {
+            console.error('Update error:', error);
+            message.error(error.message);
+        } finally {
+            setLoading(false);
+        }
+    };
+
     if (loading || !userData) {
         return <div>Loading user data...</div>;
     }
@@ -71,6 +111,23 @@ export const AccountPage = () => {
                         View My Products
                     </Button>
                     <Button
+                        type="default"
+                        icon={<EditOutlined />}
+                        onClick={() => setEditModalVisible(true)}
+                        block
+                    >
+                        Edit Account
+                    </Button>
+                    <Button
+                        danger
+                        type="default"
+                        icon={<DeleteOutlined />}
+                        onClick={handleDeleteAccount}
+                        block
+                    >
+                        Delete Account
+                    </Button>
+                    <Button
                         type="primary"
                         icon={<LogoutOutlined />}
                         onClick={handleLogout}
@@ -81,6 +138,13 @@ export const AccountPage = () => {
                     </Button>
                 </Space>
             </Card>
+
+            <EditAccountModal
+                visible={editModalVisible}
+                onCancel={() => setEditModalVisible(false)}
+                userData={userData}
+                onSave={handleUpdateAccount}
+            />
         </div>
     );
 };
