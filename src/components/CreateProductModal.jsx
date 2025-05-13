@@ -69,6 +69,7 @@ const CreateProductModal = ({ visible, onCancel, onCreate }) => {
 
             const product = await productResponse.json();
             message.success('Product created successfully');
+            console.log("Созданный продукт:", product);
             onCreate(product);
             form.resetFields();
             setSearchValue('');
