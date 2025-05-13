@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { Card, Button, message, Space, Typography, Modal } from 'antd';
+import { Card, Button, message, Space, Typography } from 'antd';
 import { ShoppingCartOutlined, LogoutOutlined, EditOutlined, DeleteOutlined } from '@ant-design/icons';
 import EditAccountModal from '../components/EditAccountModal';
 import './AccountPage.css';
-import { showDeleteConfirm } from '../components/DeleteAccountModal';
+import DeleteAccountModal from '../components/DeleteAccountModal';
 
 const { Title, Text: AntdText } = Typography;
 
@@ -12,6 +12,7 @@ export const AccountPage = () => {
     const [userData, setUserData] = useState(null);
     const [loading, setLoading] = useState(false);
     const [editModalVisible, setEditModalVisible] = useState(false);
+    const [deleteModalVisible, setDeleteModalVisible] = useState(false);
     const navigate = useNavigate();
     const { id } = useParams();
 
@@ -45,10 +46,10 @@ export const AccountPage = () => {
         navigate(`/users/${id}/products`);
     };
 
-    const handleDeleteAccount = () => {
-        showDeleteConfirm(id, () => {
-            navigate('/');
-        });
+    const handleDeleteSuccess = () => {
+        setDeleteModalVisible(false);
+        navigate('/');
+        message.success('Your account has been deleted successfully');
     };
 
     const handleUpdateAccount = async (values) => {
@@ -61,7 +62,7 @@ export const AccountPage = () => {
                 },
                 body: JSON.stringify({
                     username: values.username,
-                    password: values.password, // Добавляем пароль
+                    password: values.password,
                     bio: values.bio
                 }),
             });
@@ -122,7 +123,7 @@ export const AccountPage = () => {
                         danger
                         type="default"
                         icon={<DeleteOutlined />}
-                        onClick={handleDeleteAccount}
+                        onClick={() => setDeleteModalVisible(true)}
                         block
                     >
                         Delete Account
@@ -144,6 +145,13 @@ export const AccountPage = () => {
                 onCancel={() => setEditModalVisible(false)}
                 userData={userData}
                 onSave={handleUpdateAccount}
+            />
+
+            <DeleteAccountModal
+                userId={id}
+                visible={deleteModalVisible}
+                onCancel={() => setDeleteModalVisible(false)}
+                onSuccess={handleDeleteSuccess}
             />
         </div>
     );
