@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect, useRef } from 'react';
 import { Modal, Form, Input, InputNumber, Select, Button, message } from 'antd';
 import { PlusOutlined } from '@ant-design/icons';
@@ -15,10 +14,11 @@ const EditProductModal = ({ product, visible, onCancel, onUpdate }) => {
     useEffect(() => {
         if (visible) {
             fetchCategories();
+            // Set initial form values when modal opens
             form.setFieldsValue({
                 name: product.name,
                 price: product.price,
-                categoryId: product.category?.id || product.category
+                categoryId: product.category?.id || product.categoryId,
             });
         }
     }, [visible, product]);
@@ -38,11 +38,11 @@ const EditProductModal = ({ product, visible, onCancel, onUpdate }) => {
         try {
             setLoading(true);
             const values = await form.validateFields();
-            console.log("Отправляемые данные:", values);
 
             let categoryId = values.categoryId;
             let categoryName = values.categoryName;
 
+            // If creating a new category
             if (values.categoryId === 'create_new' && searchValue) {
                 categoryName = searchValue;
                 const categoryResponse = await fetch('http://localhost:8080/categories', {
@@ -58,7 +58,8 @@ const EditProductModal = ({ product, visible, onCancel, onUpdate }) => {
                 categoryId = newCategory.id;
             }
 
-            const response = await fetch(`http://localhost:8080/products/${product.id}`, {
+            // Update the product
+            const productResponse = await fetch(`http://localhost:8080/products/${product.id}`, {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',
@@ -70,11 +71,13 @@ const EditProductModal = ({ product, visible, onCancel, onUpdate }) => {
                 }),
             });
 
-            if (!response.ok) throw new Error('Failed to update product');
+            if (!productResponse.ok) throw new Error('Failed to update product');
 
-            const updatedProduct = await response.json();
+            const updatedProduct = await productResponse.json();
             message.success('Product updated successfully');
             onUpdate(updatedProduct);
+            form.resetFields();
+            setSearchValue('');
             onCancel();
         } catch (error) {
             message.error(error.message);
@@ -85,6 +88,12 @@ const EditProductModal = ({ product, visible, onCancel, onUpdate }) => {
 
     const handleSearch = (value) => {
         setSearchValue(value);
+    };
+
+    const handleSelectFocus = () => {
+        if (selectRef.current) {
+            selectRef.current.focus();
+        }
     };
 
     const dropdownRender = (menu) => (
@@ -161,6 +170,7 @@ const EditProductModal = ({ product, visible, onCancel, onUpdate }) => {
                         placeholder="Select or create category"
                         optionFilterProp="children"
                         onSearch={handleSearch}
+                        onFocus={handleSelectFocus}
                         filterOption={(input, option) =>
                             option.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
                         }
@@ -178,6 +188,10 @@ const EditProductModal = ({ product, visible, onCancel, onUpdate }) => {
                             </Option>
                         ))}
                     </Select>
+                </Form.Item>
+
+                <Form.Item name="categoryName" noStyle>
+                    <Input type="hidden" />
                 </Form.Item>
             </Form>
         </Modal>

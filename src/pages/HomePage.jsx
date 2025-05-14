@@ -2,16 +2,13 @@ import React, { useEffect, useState } from "react";
 import { Typography, Button } from "antd";
 import ProductsList from "../components/ProductList";
 import CreateProductModal from "../components/CreateProductModal";
-import EditProductModal from "../components/EditProductModal";
 
 const { Title } = Typography;
 
 const HomePage = () => {
     const [products, setProducts] = useState([]);
     const [loading, setLoading] = useState(true);
-    const [isCreateModalVisible, setIsCreateModalVisible] = useState(false);
-    const [isEditModalVisible, setIsEditModalVisible] = useState(false);
-    const [selectedProduct, setSelectedProduct] = useState(null);
+    const [isModalVisible, setIsModalVisible] = useState(false);
 
     useEffect(() => {
         fetchProducts();
@@ -31,41 +28,42 @@ const HomePage = () => {
 
     const handleCreateProduct = (newProduct) => {
         setProducts((prevProducts) => [...prevProducts, newProduct]);
-        setIsCreateModalVisible(false);
-    };
-
-    const handleEditProduct = (product) => {
-        setSelectedProduct(product);
-        setIsEditModalVisible(true);
+        setIsModalVisible(false);
     };
 
     const handleUpdateProduct = (updatedProduct) => {
-        setProducts((prevProducts) =>
-            prevProducts.map((p) => (p.id === updatedProduct.id ? updatedProduct : p))
+        setProducts(prevProducts =>
+            prevProducts.map(product =>
+                product.id === updatedProduct.id ? updatedProduct : product
+            )
         );
-        setIsEditModalVisible(false);
+    };
+
+    const handleDeleteProduct = (productId) => {
+        setProducts(prevProducts =>
+            prevProducts.filter(product => product.id !== productId)
+        );
     };
 
     return (
         <div className="home-page">
-            <Title level={2} className="page-title">Our Products</Title>
-            <Button type="primary" onClick={() => setIsCreateModalVisible(true)}>
+            <Title level={2} className="page-title">
+                Our Products
+            </Title>
+            <Button type="primary" onClick={() => setIsModalVisible(true)}>
                 Create New Product
             </Button>
-            <ProductsList products={products} loading={loading} onEdit={handleEditProduct} />
+            <ProductsList
+                products={products}
+                loading={loading}
+                onUpdate={handleUpdateProduct}
+                onDelete={handleDeleteProduct}
+            />
             <CreateProductModal
-                visible={isCreateModalVisible}
-                onCancel={() => setIsCreateModalVisible(false)}
+                visible={isModalVisible}
+                onCancel={() => setIsModalVisible(false)}
                 onCreate={handleCreateProduct}
             />
-            {selectedProduct && (
-                <EditProductModal
-                    visible={isEditModalVisible}
-                    product={selectedProduct}
-                    onCancel={() => setIsEditModalVisible(false)}
-                    onUpdate={handleUpdateProduct}
-                />
-            )}
         </div>
     );
 };
