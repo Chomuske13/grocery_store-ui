@@ -3,6 +3,7 @@
     margin: 10px;
     border-radius: 8px;
     overflow: hidden;
+    margin-bottom: 16px;
 }
 
 .product-image {
@@ -25,4 +26,18 @@
     margin-top: 8px;
     color: #666;
     font-size: 0.9em;
+}
+
+.product-card .ant-card-actions {
+    background: #fafafa;
+    border-top: 1px solid #f0f0f0;
+}
+
+.product-card .ant-card-actions > li {
+    margin: 8px 0;
+}
+
+.product-card h3 {
+    margin-bottom: 8px;
+    font-size: 16px;
 }
