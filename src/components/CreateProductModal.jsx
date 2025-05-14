@@ -9,11 +9,15 @@ const CreateProductModal = ({ visible, onCancel, onCreate }) => {
     const [categories, setCategories] = useState([]);
     const [loading, setLoading] = useState(false);
     const [searchValue, setSearchValue] = useState('');
+    const [isTypingNewCategory, setIsTypingNewCategory] = useState(false);
     const selectRef = useRef(null);
 
     useEffect(() => {
         if (visible) {
             fetchCategories();
+            form.resetFields();
+            setSearchValue('');
+            setIsTypingNewCategory(false);
         }
     }, [visible]);
 
@@ -34,17 +38,15 @@ const CreateProductModal = ({ visible, onCancel, onCreate }) => {
             const values = await form.validateFields();
 
             let categoryId = values.categoryId;
-            let categoryName = values.categoryName;
 
-            // Если выбрана опция создания новой категории
-            if (values.categoryId === 'create_new' && searchValue) {
-                categoryName = searchValue;
+            // Если пользователь ввел новую категорию
+            if (isTypingNewCategory && searchValue) {
                 const categoryResponse = await fetch('http://localhost:8080/categories', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
                     },
-                    body: JSON.stringify({ name: categoryName }),
+                    body: JSON.stringify({ name: searchValue }),
                 });
 
                 if (!categoryResponse.ok) throw new Error('Failed to create category');
@@ -69,10 +71,10 @@ const CreateProductModal = ({ visible, onCancel, onCreate }) => {
 
             const product = await productResponse.json();
             message.success('Product created successfully');
-            console.log("Созданный продукт:", product);
             onCreate(product);
             form.resetFields();
             setSearchValue('');
+            setIsTypingNewCategory(false);
         } catch (error) {
             message.error(error.message);
         } finally {
@@ -82,6 +84,16 @@ const CreateProductModal = ({ visible, onCancel, onCreate }) => {
 
     const handleSearch = (value) => {
         setSearchValue(value);
+        setIsTypingNewCategory(true);
+    };
+
+    const handleSelect = (value, option) => {
+        if (value === 'create_new') {
+            setIsTypingNewCategory(true);
+        } else {
+            setSearchValue(option.children);
+            setIsTypingNewCategory(false);
+        }
     };
 
     const handleSelectFocus = () => {
@@ -90,19 +102,10 @@ const CreateProductModal = ({ visible, onCancel, onCreate }) => {
         }
     };
 
-    const dropdownRender = (menu) => (
-        <div>
-            <div style={{ padding: 8 }}>
-                <Input
-                    placeholder="Search or create category"
-                    value={searchValue}
-                    onChange={(e) => setSearchValue(e.target.value)}
-                    allowClear
-                />
-            </div>
-            {menu}
-        </div>
-    );
+    const filterOption = (input, option) => {
+        if (option.value === 'create_new') return true;
+        return option.children.toLowerCase().indexOf(input.toLowerCase()) >= 0;
+    };
 
     return (
         <Modal
@@ -163,16 +166,15 @@ const CreateProductModal = ({ visible, onCancel, onCreate }) => {
                         showSearch
                         placeholder="Select or create category"
                         optionFilterProp="children"
+                        value={isTypingNewCategory ? undefined : searchValue}
                         onSearch={handleSearch}
+                        onChange={handleSelect}
                         onFocus={handleSelectFocus}
-                        filterOption={(input, option) =>
-                            option.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
-                        }
-                        dropdownRender={dropdownRender}
+                        filterOption={filterOption}
                         style={{ width: '100%' }}
+                        dropdownMatchSelectWidth={false}
                     >
-                        {/* Опция создания новой категории - теперь в начале списка */}
-                        {searchValue && (
+                        {searchValue && !categories.some(c => c.name.toLowerCase() === searchValue.toLowerCase()) && (
                             <Option key="create_new" value="create_new">
                                 <PlusOutlined /> Create "{searchValue}"
                             </Option>
@@ -183,11 +185,6 @@ const CreateProductModal = ({ visible, onCancel, onCreate }) => {
                             </Option>
                         ))}
                     </Select>
-                </Form.Item>
-
-                {/* Скрытое поле для хранения имени новой категории */}
-                <Form.Item name="categoryName" noStyle>
-                    <Input type="hidden" />
                 </Form.Item>
             </Form>
         </Modal>
