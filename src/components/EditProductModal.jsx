@@ -14,11 +14,12 @@ const EditProductModal = ({ product, visible, onCancel, onUpdate }) => {
     useEffect(() => {
         if (visible) {
             fetchCategories();
+            console.log("Редактируемый продукт:", product); // Проверяем, что приходит
             // Set initial form values when modal opens
             form.setFieldsValue({
                 name: product.name,
                 price: product.price,
-                categoryId: product.category?.id || product.categoryId,
+                categoryId: product.category?.id || product.category,
             });
         }
     }, [visible, product]);
