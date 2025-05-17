@@ -6,7 +6,7 @@ import './UserProductsPage.css';
 
 const { Title, Text: AntdText } = Typography;
 
-export const UserProductsPage = () => {
+export const UserProductsPage = ({ refreshKey }) => { // 🔹 Теперь принимает refreshKey
     const [products, setProducts] = useState([]);
     const [loading, setLoading] = useState(false);
     const { id } = useParams();
@@ -16,15 +16,6 @@ export const UserProductsPage = () => {
         const fetchUserProducts = async () => {
             setLoading(true);
             try {
-                // Загружаем сохранённые продукты из localStorage
-                const storedProducts = JSON.parse(localStorage.getItem("userProducts")) || [];
-
-                if (storedProducts.length > 0) {
-                    setProducts(storedProducts);
-                    setLoading(false);
-                    return;
-                }
-
                 const userResponse = await fetch(`http://localhost:8080/users/${id}`);
                 if (!userResponse.ok) throw new Error('Failed to fetch user data');
 
@@ -37,7 +28,6 @@ export const UserProductsPage = () => {
 
                 const productsData = await productsResponse.json();
                 setProducts(productsData);
-                localStorage.setItem("userProducts", JSON.stringify(productsData)); // Сохраняем в localStorage
             } catch (error) {
                 message.error(error.message);
                 navigate(-1);
@@ -47,7 +37,7 @@ export const UserProductsPage = () => {
         };
 
         fetchUserProducts();
-    }, [id, navigate]);
+    }, [id, navigate, refreshKey]); // 🔹 Теперь обновляется при изменении refreshKey
 
     return (
         <div className="user-products-container">

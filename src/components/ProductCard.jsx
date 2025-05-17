@@ -23,11 +23,11 @@ const ProductCard = ({ product, onUpdate, onDelete, isAuthenticated }) => {
         setAddingProduct(true);
         try {
             await addProductToUser(product.id);
-
+/*
             const storedProducts = JSON.parse(localStorage.getItem("userProducts")) || [];
             const updatedProducts = [...storedProducts, product];
             localStorage.setItem("userProducts", JSON.stringify(updatedProducts));
-
+*/
         } catch (error) {
             console.error('Error adding product:', error);
         } finally {
@@ -57,7 +57,7 @@ const ProductCard = ({ product, onUpdate, onDelete, isAuthenticated }) => {
                             icon={<PlusOutlined />}
                             onClick={handleAddProduct}
                             loading={addingProduct}
-                            disabled={addingProduct}
+                            //disabled={addingProduct}
                         />
                     )
                 ].filter(Boolean)} // Фильтруем null/undefined элементы

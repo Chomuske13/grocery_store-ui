@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Typography, Button } from "antd";
+import { useLocation } from "react-router-dom";
 import ProductsList from "../components/ProductList";
 import CreateProductModal from "../components/CreateProductModal";
 
@@ -9,10 +10,7 @@ const HomePage = () => {
     const [products, setProducts] = useState([]);
     const [loading, setLoading] = useState(true);
     const [isModalVisible, setIsModalVisible] = useState(false);
-
-    useEffect(() => {
-        fetchProducts();
-    }, []);
+    const location = useLocation(); // 🔹 Получаем текущий URL
 
     const fetchProducts = async () => {
         try {
@@ -25,6 +23,10 @@ const HomePage = () => {
             setLoading(false);
         }
     };
+
+    useEffect(() => {
+        fetchProducts();
+    }, [location.pathname]); // 🔹 Обновляем данные при каждом заходе на страницу
 
     const handleCreateProduct = (newProduct) => {
         setProducts((prevProducts) => [...prevProducts, newProduct]);
