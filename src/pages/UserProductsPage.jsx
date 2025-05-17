@@ -1,12 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { List, Button, Tag, Space, message, Typography } from 'antd';
-import { ArrowLeftOutlined } from '@ant-design/icons';
+import { List, Button, Tag, Space, message, Typography, Popconfirm } from 'antd';
+import { ArrowLeftOutlined, DeleteOutlined } from '@ant-design/icons';
 import './UserProductsPage.css';
 
 const { Title, Text: AntdText } = Typography;
 
-export const UserProductsPage = ({ refreshKey }) => { // 🔹 Теперь принимает refreshKey
+export const UserProductsPage = ({ refreshKey, onProductRemoved }) => {
     const [products, setProducts] = useState([]);
     const [loading, setLoading] = useState(false);
     const { id } = useParams();
@@ -37,7 +37,31 @@ export const UserProductsPage = ({ refreshKey }) => { // 🔹 Теперь пр�
         };
 
         fetchUserProducts();
-    }, [id, navigate, refreshKey]); // 🔹 Теперь обновляется при изменении refreshKey
+    }, [id, navigate, refreshKey]);
+
+    const handleRemoveProduct = async (productId) => {
+        try {
+            const response = await fetch(`http://localhost:8080/products/${productId}/users/${id}`, {
+                method: 'DELETE',
+            });
+
+            if (!response.ok) {
+                throw new Error('Failed to remove product');
+            }
+
+            message.success('Product removed successfully');
+
+            // Update the local state to remove the deleted product
+            setProducts(products.filter(product => product.id !== productId));
+
+            // Notify parent component if needed
+            if (onProductRemoved) {
+                onProductRemoved();
+            }
+        } catch (error) {
+            message.error(error.message);
+        }
+    };
 
     return (
         <div className="user-products-container">
@@ -61,7 +85,24 @@ export const UserProductsPage = ({ refreshKey }) => { // 🔹 Теперь пр�
                     itemLayout="vertical"
                     dataSource={products}
                     renderItem={product => (
-                        <List.Item>
+                        <List.Item
+                            actions={[
+                                <Popconfirm
+                                    title="Are you sure you want to remove this product?"
+                                    onConfirm={() => handleRemoveProduct(product.id)}
+                                    okText="Yes"
+                                    cancelText="No"
+                                >
+                                    <Button
+                                        type="text"
+                                        danger
+                                        icon={<DeleteOutlined />}
+                                    >
+                                        Remove
+                                    </Button>
+                                </Popconfirm>
+                            ]}
+                        >
                             <List.Item.Meta
                                 title={product.name}
                                 description={
