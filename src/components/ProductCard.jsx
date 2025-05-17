@@ -1,13 +1,15 @@
 import React, { useState } from 'react';
 import './ProductCard.css';
 import { Card, Button } from 'antd';
-import { EditOutlined, DeleteOutlined } from '@ant-design/icons';
+import { EditOutlined, DeleteOutlined, PlusOutlined } from '@ant-design/icons';
 import EditProductModal from './EditProductModal';
 import DeleteProductModal from './DeleteProductModal';
+import { addProductToUser } from '../services/addProductToUser';
 
-const ProductCard = ({ product, onUpdate, onDelete }) => {
+const ProductCard = ({ product, onUpdate, onDelete, isAuthenticated }) => {
     const [isEditModalVisible, setIsEditModalVisible] = useState(false);
     const [isDeleteModalVisible, setIsDeleteModalVisible] = useState(false);
+    const [addingProduct, setAddingProduct] = useState(false);
 
     const handleEdit = () => {
         setIsEditModalVisible(true);
@@ -15,6 +17,18 @@ const ProductCard = ({ product, onUpdate, onDelete }) => {
 
     const handleDeleteClick = () => {
         setIsDeleteModalVisible(true);
+    };
+
+    const handleAddProduct = async () => {
+        setAddingProduct(true);
+        try {
+            await addProductToUser(product.id);
+            // Можно добавить дополнительную логику после успешного добавления
+        } catch (error) {
+            console.error('Error adding product:', error);
+        } finally {
+            setAddingProduct(false);
+        }
     };
 
     return (
@@ -32,8 +46,17 @@ const ProductCard = ({ product, onUpdate, onDelete }) => {
                         type="text"
                         icon={<DeleteOutlined />}
                         onClick={handleDeleteClick}
-                    />
-                ]}
+                    />,
+                    isAuthenticated && (
+                        <Button
+                            type="text"
+                            icon={<PlusOutlined />}
+                            onClick={handleAddProduct}
+                            loading={addingProduct}
+                            disabled={addingProduct}
+                        />
+                    )
+                ].filter(Boolean)} // Фильтруем null/undefined элементы
             >
                 <h3>{product.name}</h3>
                 <div className="product-price">${product.price}</div>

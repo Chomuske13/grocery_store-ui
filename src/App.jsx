@@ -9,10 +9,12 @@ import './App.css';
 import AccountPage from "./pages/AccountPage.jsx";
 import UserProductsPage from './pages/UserProductsPage';
 
+
 const { Content, Footer } = Layout;
 
 function App() {
     return (
+
         <Router>
             <Layout className="app-layout">
                 <Navbar />
@@ -30,6 +32,7 @@ function App() {
                 </Footer>
             </Layout>
         </Router>
+
     );
 }
 
