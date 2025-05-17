@@ -23,7 +23,11 @@ const ProductCard = ({ product, onUpdate, onDelete, isAuthenticated }) => {
         setAddingProduct(true);
         try {
             await addProductToUser(product.id);
-            // Можно добавить дополнительную логику после успешного добавления
+
+            const storedProducts = JSON.parse(localStorage.getItem("userProducts")) || [];
+            const updatedProducts = [...storedProducts, product];
+            localStorage.setItem("userProducts", JSON.stringify(updatedProducts));
+
         } catch (error) {
             console.error('Error adding product:', error);
         } finally {
